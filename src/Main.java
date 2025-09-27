@@ -20,10 +20,6 @@ public class Main {
         library.printAllBooks();
         library.getBooksByGenre("ужасы");
 
-        int i = 5;
-        int b = i;
-        b = -1;
-        System.out.println(b);
-        System.out.println(i);
+
     }
 }

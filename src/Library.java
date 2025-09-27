@@ -79,7 +79,7 @@ public class Library {
                 }
             }
         }
-        return null; // книга не найдена
+        return null; // книга не найден
     }
 }
 
