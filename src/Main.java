@@ -1,25 +1,49 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import java.util.Scanner;
+
+
 public class Main {
     public static void main(String[] args) {
-        Book book = new Book("Война и мир", "Толстой","роман", 1945);
-        Book book1 = new Book("fff", "ffsddfdf", "ужасы");
-        Book book2 = new Book("fdfd", "dff", "ужасы");
-        book.Info();
-
         Library library = new Library();
-
-        library.addBook(book);
-        library.addBook(book1);
-        library.addBook(book2);
-
+        library.loadBooksFromFile("files/books.txt");
+        boolean flag = false;
+        Scanner scan = new Scanner(System.in);
         library.printAllBooks();
+        while (!flag) {
+            int x = 0;
+            System.out.println("1.добавить книгу\n2.удалить книгу\n3.найти книгу\n4.вывести список книг");
+            x = scan.nextInt();
+            switch (x) {
+                case 1:
+                    System.out.println("Введите название: ");
+                    String name = scan.nextLine();
+                    System.out.println("Введите Фамилию автора: ");
+                    String author = scan.nextLine();
+                    System.out.println("Введите жанр(с большой буквы): ");
+                    String genre = scan.nextLine();
+                    System.out.println("Введите год создания: ");
+                    int year = scan.nextInt();
+                    scan.nextLine(); // очистка после nextInt
+                    library.addBook(new Book(name, author, genre, year));
+                    break;
 
-        library.removeBookByName("fff");
+                case 2:
+                    System.out.println("Введите название: ");
+                    String title = scan.nextLine();  // теперь это будет работать нормально
+                    Book book = library.findBookByName(title);
+                    if (book == null) {
+                        System.out.println("Книги не существует");
+                    } else {
+                        library.removeBookByName(book.getName());
+                        System.out.println("Книга удалена");
+                    }
+                    break;
 
-        library.printAllBooks();
-        library.getBooksByGenre("ужасы");
+                case 8:
+                    flag = true;
+                    library.saveBooksToFile("files/lib.txt");
+                    break;
+            }
 
-
+        }
     }
 }

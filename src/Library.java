@@ -1,4 +1,8 @@
 import java.util.*;
+import java.io.*;
+import java.util.regex.*;
+
+
 
 public class Library {
     private HashMap<String, ArrayList<Book>> booksByGenre = new HashMap<>();
@@ -70,7 +74,7 @@ public class Library {
         }
     }
 
-    public Book findBookByTitle(String name) {
+    public Book findBookByName(String name) {
         // перебираем все жанры
         for (ArrayList<Book> list : booksByGenre.values()) {
             for (Book book : list) {
@@ -81,6 +85,75 @@ public class Library {
         }
         return null; // книга не найден
     }
+    public ArrayList<Book> findBooksByAuthor(String author) {
+        ArrayList<Book> result = new ArrayList<>();
+
+        // перебираем все списки книг по жанрам
+        for (ArrayList<Book> list : booksByGenre.values()) {
+            for (Book book : list) {
+                if (book.getAuthor().equalsIgnoreCase(author)) {
+                    result.add(book); // добавляем найденную книгу в результат
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public void loadBooksFromFile(String filePath) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+
+            // Регулярка для извлечения name, author, genre, year
+            Pattern pattern = Pattern.compile(
+                    "\\[name = \"(.*?)\", author = \"(.*?)\", genre = \"(.*?)\", year = (\\d+)\\]"
+            );
+
+            while ((line = reader.readLine()) != null) {
+                Matcher matcher = pattern.matcher(line);
+                if (matcher.find()) {
+                    String name = matcher.group(1);
+                    String author = matcher.group(2);
+                    String genre = matcher.group(3);
+                    int year = Integer.parseInt(matcher.group(4));
+                    if (author.isEmpty()) author = "John Doe";
+                    if (genre.isEmpty()) genre = "unknown";
+                    if (year < 0) year = -1;
+                    Book book = new Book(name, author, genre, year);
+                    addBook(book);
+                }
+
+
+            }
+
+            System.out.println("Книги успешно загружены из файла: " + filePath);
+
+        } catch (IOException e) {
+            System.out.println("Ошибка при чтении файла: " + e.getMessage());
+        }
+    }
+    public void saveBooksToFile(String filePath) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            // Перебираем все жанры и книги в них
+            for (Map.Entry<String, ArrayList<Book>> entry : booksByGenre.entrySet()) {
+                for (Book book : entry.getValue()) {
+                    String line = String.format(
+                            "[name = \"%s\", author = \"%s\", genre = \"%s\", year = %d]",
+                            book.getName(),
+                            book.getAuthor(),
+                            book.getGenre(),
+                            book.getDate()
+                    );
+                    writer.write(line);
+                    writer.newLine(); // переход на новую строку
+                }
+            }
+            System.out.println("Библиотека успешно сохранена в файл: " + filePath);
+        } catch (IOException e) {
+            System.out.println("Ошибка при сохранении в файл: " + e.getMessage());
+        }
+    }
+
 }
 
 
