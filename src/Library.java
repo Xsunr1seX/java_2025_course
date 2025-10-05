@@ -12,6 +12,49 @@ public class Library {
         booksByGenre.putIfAbsent(genre, new ArrayList<>());
         booksByGenre.get(genre).add(book);
     }
+    public void editBook(String name, String newName, String newAuthor, String newGenre, Integer newYear) {
+        Book bookToEdit = findBookByName(name);
+        if (bookToEdit == null) {
+            System.out.println("Книга \"" + name + "\" не найдена.");
+            return;
+        }
+
+        // 1. Проверка и обновление жанра
+        String oldGenre = bookToEdit.getGenre();
+        if (newGenre != null && !newGenre.isEmpty() && !newGenre.equalsIgnoreCase(oldGenre)) {
+            // Удаляем из старого жанра
+            List<Book> oldList = booksByGenre.get(oldGenre);
+            if (oldList != null) {
+                oldList.remove(bookToEdit);
+                // если жанр пуст — удалить его
+                if (oldList.isEmpty()) {
+                    booksByGenre.remove(oldGenre);
+                }
+            }
+
+            // Добавляем в новый
+            booksByGenre.putIfAbsent(newGenre, new ArrayList<>());
+            booksByGenre.get(newGenre).add(bookToEdit);
+
+            // Обновляем жанр у книги
+            bookToEdit.setGenre(newGenre);
+        }
+
+        // 2. Остальные поля
+        if (newName != null && !newName.isEmpty()) {
+            bookToEdit.setName(newName);
+        }
+
+        if (newAuthor != null && !newAuthor.isEmpty()) {
+            bookToEdit.setAuthor(newAuthor);
+        }
+
+        if (newYear != null && newYear > 0) {
+            bookToEdit.setDate(newYear);
+        }
+
+        System.out.println("Книга \"" + name + "\" успешно отредактирована!");
+    }
 
 
     public void getBooksByGenre(String genre) {
@@ -34,13 +77,14 @@ public class Library {
             return;
         }
 
+        System.out.println("Список всех книг в библиотеке:");
         for (Map.Entry<String, ArrayList<Book>> entry : booksByGenre.entrySet()) {
             String genre = entry.getKey();
             ArrayList<Book> list = entry.getValue();
 
-            System.out.println("Жанр: " + genre);
+            System.out.println("\nЖанр: " + genre);
             for (Book book : list) {
-                System.out.println(book.getName() + " ");
+                System.out.printf(" - \"%s\" (%s, %d)\n", book.getName(), book.getAuthor(), book.getDate());
             }
         }
     }
@@ -85,7 +129,7 @@ public class Library {
         }
         return null; // книга не найден
     }
-    public ArrayList<Book> findBooksByAuthor(String author) {
+    public void findBooksByAuthor(String author) {
         ArrayList<Book> result = new ArrayList<>();
 
         // перебираем все списки книг по жанрам
@@ -96,8 +140,12 @@ public class Library {
                 }
             }
         }
+        System.out.println("Книги автора" + author +": ");
+        for (Book books : result){
+            System.out.println(books.getName());
+        }
 
-        return result;
+
     }
 
     public void loadBooksFromFile(String filePath) {
@@ -151,6 +199,37 @@ public class Library {
             System.out.println("Библиотека успешно сохранена в файл: " + filePath);
         } catch (IOException e) {
             System.out.println("Ошибка при сохранении в файл: " + e.getMessage());
+        }
+    }
+    public void importBooksFromFile(String filePath) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            Pattern pattern = Pattern.compile(
+                    "\\[name = \"(.*?)\", author = \"(.*?)\", genre = \"(.*?)\", year = (\\d+)\\]"
+            );
+
+            int count = 0;
+
+            while ((line = reader.readLine()) != null) {
+                Matcher matcher = pattern.matcher(line);
+                if (matcher.find()) {
+                    String name = matcher.group(1);
+                    String author = matcher.group(2);
+                    String genre = matcher.group(3);
+                    int year = Integer.parseInt(matcher.group(4));
+
+                    // Проверяем, нет ли уже такой книги
+                    if (findBookByName(name) == null) {
+                        addBook(new Book(name, author, genre, year));
+                        count++;
+                    }
+                }
+            }
+
+            System.out.println("Импортировано " + count + " новых книг из файла: " + filePath);
+
+        } catch (IOException e) {
+            System.out.println("Ошибка при импорте книг: " + e.getMessage());
         }
     }
 
