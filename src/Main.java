@@ -1,3 +1,7 @@
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Scanner;
 
 
@@ -10,7 +14,7 @@ public class Main {
 
         while (!flag) {
             int x = 0;
-            System.out.println("1.добавить книгу\n2.удалить книгу\n3.найти книгу\n4.вывести список книг\n6.импортировать книги из books.txt");
+            System.out.println("1.добавить книгу\n2.удалить книгу\n3.найти книгу\n4.вывести список книг\n5.редактировать книгу\n6.импортировать книги из books.txt \n7.помощь\n8.сохранить и выйти");
             x = scan.nextInt();
             switch (x) {
                 case 1:
@@ -21,10 +25,13 @@ public class Main {
                     String author = scan.nextLine();
                     System.out.println("Введите жанр (с большой буквы): ");
                     String genre = scan.nextLine();
-                    System.out.println("Введите год создания: ");
+                    System.out.println("Введите год создания(если неизвестен, пишите 0): ");
                     int year = scan.nextInt();
                     scan.nextLine();
-                    library.addBook(new Book(name, author, genre, year));
+                    if (author.isEmpty())
+                        library.addBook(new Book(name, "John Doe", genre, year));
+                    else
+                        library.addBook(new Book(name, author, genre, year));
                     System.out.println("Книга успешно добавлена!\n");
                     break;
 
@@ -59,8 +66,23 @@ public class Main {
                     break;
 
                 case 4:
-                    library.printAllBooks();
-                    System.out.println("\n");
+                    int y;
+                    scan.nextLine();
+                    System.out.println("Вы хотите увидеть список всех книг или список книг одного жанра?\n1.всех книг\n2.один жанр");
+                    y = scan.nextInt();
+                    switch (y) {
+                        case 1:
+                            library.printAllBooks();
+                            System.out.println("\n");
+                            break;
+                        case 2:
+                            String ganr;
+                            scan.nextLine();
+                            System.out.println("Какой жанр вас интересует?");
+                            ganr = scan.nextLine();
+                            library.printBooksByGenre(ganr);
+                            break;
+                    }
                     break;
                 case 5:
                     scan.nextLine();
@@ -88,6 +110,17 @@ public class Main {
                 case 6:
                     library.importBooksFromFile("files/books.txt");
                     library.saveBooksToFile("files/lib.txt");
+                    break;
+                case 7:
+                    try (BufferedReader reader = new BufferedReader(new FileReader("files/help.txt"))){
+                        String line;
+                        while((line = reader.readLine()) != null){
+                            System.out.println(line);
+                        }
+
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                     break;
 
                 case 8:

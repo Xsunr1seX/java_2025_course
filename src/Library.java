@@ -57,7 +57,7 @@ public class Library {
     }
 
 
-    public void getBooksByGenre(String genre) {
+    public void printBooksByGenre(String genre) {
         if (booksByGenre.isEmpty()) {
             System.out.println("Библиотека пуста.");
             return;
@@ -67,8 +67,9 @@ public class Library {
 
         System.out.println("Жанр: " + genre);
         for (Book book : list) {
-            System.out.println(book.getName() + " ");
+            System.out.println(book.getName() + "," + book.getAuthor() +"," + book.getDate());
         }
+        System.out.println("\n");
     }
 
     public void printAllBooks() {
