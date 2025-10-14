@@ -14,7 +14,21 @@ public class Main {
 
         while (!flag) {
             int x = 0;
-            System.out.println("1.добавить книгу\n2.удалить книгу\n3.найти книгу\n4.вывести список книг\n5.редактировать книгу\n6.импортировать книги из books.txt \n7.помощь\n8.сохранить и выйти");
+            System.out.println("""
+======================
+   МЕНЮ БИБЛИОТЕКИ
+======================
+1. Добавить книгу
+2. Удалить книгу
+3. Найти книгу
+4. Вывести список книг
+5. Редактировать книгу
+6. Импортировать книги из books.txt
+7. Помощь
+8. Сохранить и выйти
+======================
+""");
+
             x = scan.nextInt();
             switch (x) {
                 case 1:
@@ -61,6 +75,11 @@ public class Main {
                                 System.out.println("Книга " + namee + " находится в библиотеке");
                             else
                                 System.out.println("Книги не существует");
+                        case 2:
+                            scan.nextLine();
+                            System.out.println("Введите Автора:");
+                            String authorr = scan.nextLine();
+                            library.findBooksByAuthor(authorr);
 
                     }
                     break;
@@ -110,6 +129,8 @@ public class Main {
                 case 6:
                     library.importBooksFromFile("files/books.txt");
                     library.saveBooksToFile("files/lib.txt");
+                    System.out.println("Книги импортированы и сохранены!");
+
                     break;
                 case 7:
                     try (BufferedReader reader = new BufferedReader(new FileReader("files/help.txt"))){
@@ -129,6 +150,7 @@ public class Main {
                     break;
 
             }
+
 
 
         }

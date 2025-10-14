@@ -64,6 +64,10 @@ public class Library {
         }
 
         ArrayList<Book> list = booksByGenre.get(genre);
+        if (list == null || list.isEmpty()) {
+            System.out.println("Жанр \"" + genre + "\" не найден или пуст.");
+            return;
+        }
 
         System.out.println("Жанр: " + genre);
         for (Book book : list) {
@@ -141,10 +145,11 @@ public class Library {
                 }
             }
         }
-        System.out.println("Книги автора" + author +": ");
+        System.out.println("Книги автора " + author +": ");
         for (Book books : result){
             System.out.println(books.getName());
         }
+        System.out.println("\n");
 
 
     }
