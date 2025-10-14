@@ -225,7 +225,17 @@ public class Library {
                     int year = Integer.parseInt(matcher.group(4));
 
                     // Проверяем, нет ли уже такой книги
-                    if (findBookByName(name) == null) {
+                    if (findBookByName(name) != null) {
+                        if (Objects.equals(findBookByName(name).getAuthor(), author)) {
+                            count++;
+                        }
+                        else {
+                            addBook(new Book(name, author, genre, year));
+                            count++;
+                        }
+
+                    }
+                    else {
                         addBook(new Book(name, author, genre, year));
                         count++;
                     }

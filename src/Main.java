@@ -75,11 +75,13 @@ public class Main {
                                 System.out.println("Книга " + namee + " находится в библиотеке");
                             else
                                 System.out.println("Книги не существует");
+                            break;
                         case 2:
                             scan.nextLine();
                             System.out.println("Введите Автора:");
                             String authorr = scan.nextLine();
                             library.findBooksByAuthor(authorr);
+                            break;
 
                     }
                     break;
@@ -107,23 +109,27 @@ public class Main {
                     scan.nextLine();
                     System.out.println("Введите название книги для редактирования: ");
                     String titleToEdit = scan.nextLine();
+                    if (library.findBookByName(titleToEdit) != null) {
+                        System.out.println("Новое название (или оставьте пустым): ");
+                        String newName = scan.nextLine();
 
-                    System.out.println("Новое название (или оставьте пустым): ");
-                    String newName = scan.nextLine();
+                        System.out.println("Новый автор (или оставьте пустым): ");
+                        String newAuthor = scan.nextLine();
 
-                    System.out.println("Новый автор (или оставьте пустым): ");
-                    String newAuthor = scan.nextLine();
+                        System.out.println("Новый жанр (или оставьте пустым): ");
+                        String newGenre = scan.nextLine();
 
-                    System.out.println("Новый жанр (или оставьте пустым): ");
-                    String newGenre = scan.nextLine();
+                        System.out.println("Новый год (или 0): ");
+                        int yearInput = scan.nextInt();
+                        scan.nextLine();
 
-                    System.out.println("Новый год (или 0): ");
-                    int yearInput = scan.nextInt();
-                    scan.nextLine();
+                        Integer newYear = (yearInput == 0) ? null : yearInput;
 
-                    Integer newYear = (yearInput == 0) ? null : yearInput;
-
-                    library.editBook(titleToEdit, newName, newAuthor, newGenre, newYear);
+                        library.editBook(titleToEdit, newName, newAuthor, newGenre, newYear);
+                        break;
+                    }
+                    else
+                        System.out.println("Такой книги нет в библиотеке");
                     break;
 
                 case 6:
